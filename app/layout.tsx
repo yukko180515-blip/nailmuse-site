@@ -10,6 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ja">
       <head>
         <meta name="google-site-verification" content="WGj_FeARZQs4NiLiooBk1ZyWrscP7UDbG4egRJWQsmw" />
+      </head>
       <body style={{fontFamily:'Inter, Noto Sans JP, system-ui'}}>
         <header style={{padding:'16px 24px', borderBottom:'1px solid #eee', background:'#fff', position:'sticky', top:0}}>
           <div style={{maxWidth:1000, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'space-between'}}>
