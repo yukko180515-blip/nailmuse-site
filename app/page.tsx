@@ -1,31 +1,108 @@
 export default function Page() {
   return (
-    <>
-      <section style={{textAlign:'center', padding:'64px 12px', background:'linear-gradient(180deg,#fff,#f5d2c333)'}}>
-        <h1 style={{fontSize:42, marginBottom:12}}>AIが、あなたのミューズになる。</h1>
-        <p style={{fontSize:18, color:'#444'}}>AIがデザイン、クリエイターが仕上げる“あなただけのネイルチップ”。</p>
-        <div style={{marginTop:24, display:'flex', gap:12, justifyContent:'center'}}>
-          <a className="btn" href="/how-it-works">無料でデザインを試す</a>
-          <a className="btn-outline" href="/pricing">価格を見る</a>
-        </div>
+    <main
+      style={{
+        maxWidth: 800,
+        margin: '0 auto',
+        padding: '40px 16px 80px',
+        fontFamily:
+          'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif',
+      }}
+    >
+      {/* ヒーローエリア */}
+      <section
+        style={{
+          borderRadius: 24,
+          padding: '32px 24px 40px',
+          textAlign: 'center',
+          background:
+            'linear-gradient(180deg, #ffe6e6 0%, #ffd6d6 50%, #ffe9e0 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <h1
+          style={{
+            fontSize: 32,
+            lineHeight: 1.4,
+            margin: 0,
+            color: '#5a3327',
+            fontWeight: 800,
+          }}
+        >
+          理想のネイルチップを作ろう
+        </h1>
+
+        <p
+          style={{
+            marginTop: 16,
+            marginBottom: 24,
+            fontSize: 15,
+            lineHeight: 1.7,
+            color: '#6b3c2f',
+            fontWeight: 500,
+          }}
+        >
+          AIがデザイン、クリエイターが仕上げる
+          <br />
+          あなただけのネイルチップ
+        </p>
+
+        <a
+          href="/try"
+          style={{
+            display: 'inline-block',
+            padding: '12px 32px',
+            borderRadius: 999,
+            backgroundColor: '#ff9ca8',
+            color: '#ffffff',
+            fontSize: 16,
+            fontWeight: 700,
+            textDecoration: 'none',
+            boxShadow: '0 6px 16px rgba(255, 140, 160, 0.4)',
+          }}
+        >
+          無料デザイン診断
+        </a>
       </section>
-      <section style={{padding:'48px 0'}}>
-        <h2>仕組み</h2>
-        <ol>
-          <li>好み入力（色・雰囲気・用途）</li>
-          <li>AIが3–5案を提案、価格と納期目安を表示</li>
-          <li>Stripeで安全にお支払い</li>
+
+      {/* 仕組みセクション */}
+      <section
+        style={{
+          marginTop: 40,
+          borderRadius: 24,
+          border: '1px solid #ffe0e0',
+          padding: 24,
+          backgroundColor: '#fff7f7',
+        }}
+      >
+        <h2
+          style={{
+            fontSize: 20,
+            margin: 0,
+            marginBottom: 16,
+            textAlign: 'center',
+            color: '#5a3327',
+          }}
+        >
+          仕組み
+        </h2>
+
+        <ol
+          style={{
+            margin: 0,
+            paddingLeft: 20,
+            fontSize: 14,
+            lineHeight: 1.9,
+            color: '#4a2b21',
+          }}
+        >
+          <li>好みのデザインを入力</li>
+          <li>AIが3〜5案を提案、価格と納期目安を表示</li>
+          <li>Stripeで安全に支払い</li>
           <li>クリエイターが制作・配送、追跡番号を通知</li>
         </ol>
       </section>
-      <section>
-        <h2>価格</h2>
-        <ul>
-          <li><b>Basic</b> ¥3,000</li>
-          <li><b>Standard</b> ¥5,000</li>
-          <li><b>Premium</b> ¥7,000〜</li>
-        </ul>
-      </section>
-    </>
-  )
+    </main>
+  );
 }
