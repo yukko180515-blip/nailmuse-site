@@ -15,7 +15,7 @@ export default function Page() {
           borderRadius: 24,
           padding: '48px 24px 64px',
           textAlign: 'center',
-          backgroundImage: 'url("/hero-nails.jpg")',
+          backgroundImage: 'url("/images/hero-nails.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
