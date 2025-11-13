@@ -13,57 +13,72 @@ export default function Page() {
       <section
         style={{
           borderRadius: 24,
-          padding: '32px 24px 40px',
+          padding: '48px 24px 64px',
           textAlign: 'center',
-          background:
-            'linear-gradient(180deg, #ffe6e6 0%, #ffd6d6 50%, #ffe9e0 100%)',
+          backgroundImage: 'url("/hero-nails.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        <h1
+        {/* 背景の上に半透明レイヤー */}
+        <div
           style={{
-            fontSize: 32,
-            lineHeight: 1.4,
-            margin: 0,
-            color: '#5a3327',
-            fontWeight: 800,
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,230,230,0.8))',
           }}
-        >
-          理想のネイルチップを作ろう
-        </h1>
+        ></div>
 
-        <p
-          style={{
-            marginTop: 16,
-            marginBottom: 24,
-            fontSize: 15,
-            lineHeight: 1.7,
-            color: '#6b3c2f',
-            fontWeight: 500,
-          }}
-        >
-          AIがデザイン、クリエイターが仕上げる
-          <br />
-          あなただけのネイルチップ
-        </p>
+        {/* 中身 */}
+        <div style={{ position: 'relative' }}>
+          <h1
+            style={{
+              fontSize: 32,
+              lineHeight: 1.4,
+              margin: 0,
+              color: '#5a3327',
+              fontWeight: 800,
+            }}
+          >
+            理想のネイルチップを作ろう
+          </h1>
 
-        <a
-          href="/try"
-          style={{
-            display: 'inline-block',
-            padding: '12px 32px',
-            borderRadius: 999,
-            backgroundColor: '#ff9ca8',
-            color: '#ffffff',
-            fontSize: 16,
-            fontWeight: 700,
-            textDecoration: 'none',
-            boxShadow: '0 6px 16px rgba(255, 140, 160, 0.4)',
-          }}
-        >
-          無料デザイン診断
-        </a>
+          <p
+            style={{
+              marginTop: 16,
+              marginBottom: 24,
+              fontSize: 15,
+              lineHeight: 1.7,
+              color: '#6b3c2f',
+              fontWeight: 600,
+            }}
+          >
+            AIがデザイン、クリエイターが仕上げる
+            <br />
+            あなただけのネイルチップ
+          </p>
+
+          <a
+            href="/try"
+            style={{
+              display: 'inline-block',
+              padding: '12px 32px',
+              borderRadius: 999,
+              backgroundColor: '#ff9ca8',
+              color: '#ffffff',
+              fontSize: 16,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 6px 16px rgba(255, 140, 160, 0.4)',
+            }}
+          >
+            無料デザイン診断
+          </a>
+        </div>
       </section>
 
       {/* 仕組みセクション */}
