@@ -8,10 +8,11 @@ export default function Page() {
         <p style={{ fontSize: 18, color: '#555' }}>
           Easily order nail tips designed based on your preferred style.
         </p>
-        <div style={{ marginTop: 24, display: 'flex', justifyContent: 'center', gap: 16 }}>
-          <a className="btn" href="/how-it-works">How It Works</a>
-          <a className="btn-outline" href="/pricing">Pricing</a>
-        </div>
+        <div style={{ marginTop: 24, display: 'flex', gap: 12, justifyContent: 'center' }}>
+  <a className="btn" href="/en/try">Try Free Design</a>
+  <a className="btn-outline" href="/en/how-to-order">How to Order</a>
+  <a className="btn-outline" href="/en/pricing">Pricing</a>
+</div>
       </section>
 
       <section style={{ padding: '48px 24px' }}>
