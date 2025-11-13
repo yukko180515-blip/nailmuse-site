@@ -1,53 +1,67 @@
+import Script from 'next/script';
+import './globals.css';
+
 export const metadata = {
-  title: 'NailMuse — Your Muse is AI.',
-  description: 'AI designs your custom nail tip.',
+  title: 'NailMuse – Your Muse is AI',
+  description: 'AI designs your custom nail art.',
   icons: { icon: '/favicon.ico' },
-}
+};
 
-import './globals.css'
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="ja">
       <head>
-        {/* Google Search Console 用の認証タグ */}
+        {/* Google Search Console 認証 */}
         <meta
           name="google-site-verification"
-          content="WGj_FeARZQs4NiLiooBk1ZyWrscP7UDbG4egRJWQsmw"
+          content="WGj_FeARZQs4NiLiouY1PCFp1zl9b4lEWxwjFIrZF9I"
         />
+
+        {/* GA4 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
+          `}
+        </Script>
       </head>
 
-      <body style={{ fontFamily: 'Inter, Noto Sans JP, sans-serif' }}>
-        <header style={{ padding: '16px 24px', borderBottom: '1px solid #eee' }}>
-          <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-            <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-              <a href="/" style={{ fontWeight: 700 }}>NailMuse</a>
-              <a href="/how-it-works">仕組み</a>
-              <a href="/pricing">価格</a>
-              <a href="/creators">クリエイター</a>
-              <a href="/about">会社</a>
-              <a href="/contact">お問い合わせ</a>
-              <a href="/en" style={{ opacity: 0.8 }}>EN</a>
+      <body
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          margin: 0,
+          padding: 0,
+          backgroundColor: '#fafafa',
+        }}
+      >
+        <header
+          style={{
+            padding: '16px 0',
+            borderBottom: '1px solid #eee',
+            marginBottom: '24px',
+          }}
+        >
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
+            <nav style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <a href="/" style={{ fontSize: 24, fontWeight: 700 }}>NailMuse</a>
             </nav>
           </div>
         </header>
 
-        <main style={{ maxWidth: 1000, margin: '0 auto' }}>
+        <main style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
           {children}
         </main>
-
-        <footer
-          style={{
-            borderTop: '1px solid #eee',
-            padding: '16px 0',
-            marginTop: '40px',
-          }}
-        >
-          <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-            © {new Date().getFullYear()} NailMuse
-          </div>
-        </footer>
       </body>
     </html>
-  )
+  );
 }
