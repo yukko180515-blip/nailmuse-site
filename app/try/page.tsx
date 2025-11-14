@@ -1,261 +1,122 @@
 'use client';
 
-import { useState, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 
 type Option = {
-  label: string;
-  value: string;
-};
-
-type Question = {
   id: string;
-  title: string;
-  options: Option[];
-  dependsOn?: {
-    id: string;
-    value: string;
-  };
+  label: string;
+  description?: string;
 };
 
-const questions: Question[] = [
-  {
-    id: 'scene',
-    title: 'どんなシーンで使うネイル？',
-    options: [
-      { label: '日常用', value: 'daily' },
-      { label: '仕事', value: 'work' },
-      { label: 'デート', value: 'date' },
-      { label: '推し活・ライブ', value: 'live' },
-      { label: '特別な日（結婚式・イベントなど）', value: 'special' },
-      { label: '写真映え重視', value: 'photo' },
-      { label: 'おまかせ', value: 'any' },
-    ],
-  },
-  {
-    id: 'specialDetail',
-    title: '特別な日の用途を教えてください',
-    dependsOn: { id: 'scene', value: 'special' },
-    options: [
-      { label: 'ブライダル', value: 'bridal' },
-      { label: '前撮り・成人式', value: 'comingofage' },
-      { label: 'パーティー / 同窓会', value: 'party' },
-      { label: '発表会・ステージ', value: 'stage' },
-      { label: 'その他の特別な日', value: 'otherSpecial' },
-    ],
-  },
-  {
-    id: 'vibe',
-    title: 'どんな雰囲気が近い？',
-    options: [
-      { label: 'かわいい・ガーリー', value: 'cute' },
-      { label: '大人っぽい・上品', value: 'elegant' },
-      { label: 'クール・モード', value: 'cool' },
-      { label: '韓国っぽい', value: 'korean' },
-      { label: '地雷・量産系', value: 'jirai' },
-      { label: 'ナチュラル・シンプル', value: 'natural' },
-      { label: 'ニュアンス', value: 'nuance' }, // ★追加
-      { label: 'おまかせ', value: 'any' },
-    ],
-  },
-  {
-    id: 'baseColor',
-    title: 'ベースに使いたい色は？',
-    options: [
-      { label: 'ピンク系', value: 'pink' },
-      { label: 'ベージュ・ブラウン系', value: 'beige' },
-      { label: 'ホワイト・グレー系', value: 'white' },
-      { label: 'ブルー・パープル系', value: 'blue' },
-      { label: 'ブラック系', value: 'black' },
-      { label: 'その他', value: 'other' },
-      { label: 'おまかせ', value: 'any' },
-    ],
-  },
-  {
-    id: 'designType',
-    title: 'デザインのタイプは？',
-    options: [
-      { label: 'ワンカラー', value: 'oneColor' },
-      { label: 'グラデーション', value: 'gradation' },
-      { label: 'フレンチ', value: 'french' },
-      { label: 'ラメ・ホロ多め', value: 'glitter' },
-      { label: '柄・イラスト系', value: 'pattern' },
-      { label: '韓国ネイル風', value: 'koreanStyle' },
-      { label: '和柄', value: 'wagara' },       // ★追加
-      { label: 'マグネット', value: 'magnet' }, // ★追加
-      { label: 'おまかせ', value: 'any' },
-    ],
-  },
-  // Q5 は削除
-  {
-    id: 'lengthShape',
-    title: '長さと形のイメージは？（近いものを選んでね）',
-    options: [
-      { label: 'ショート × ラウンド', value: 'short-round' },
-      { label: 'ショート × スクエア', value: 'short-square' },
-      { label: 'ミディアム × オーバル', value: 'medium-oval' },
-      { label: 'ロング × バレリーナ / ポイント', value: 'long-ballerina' },
-      { label: 'こだわりなし・おまかせ', value: 'any' },
-    ],
-  },
-  {
-    id: 'motif',
-    title: '好きなモチーフがあれば教えて（なくてもOK）',
-    options: [
-      { label: 'ハート', value: 'heart' },
-      { label: 'リボン', value: 'ribbon' },
-      { label: 'フラワー', value: 'flower' },
-      { label: 'アニマル柄', value: 'animal' },
-      { label: 'マグネット / ミラー / オーロラ', value: 'magnetMirror' },
-      { label: '特になし', value: 'none' },
-      { label: 'おまかせ', value: 'any' },
-    ],
-  },
+const sceneOptions: Option[] = [
+  { id: 'omakase', label: 'おまかせ' },
+  { id: 'daily', label: '普段使い' },
+  { id: 'office', label: 'オフィス' },
+  { id: 'special', label: '特別な日' },
 ];
 
-type Answers = {
-  [key: string]: string | undefined;
+const specialSceneOptions: Option[] = [
+  { id: 'bridal', label: 'ブライダル' },
+  { id: 'coming-of-age', label: '成人式' },
+  { id: 'party', label: 'パーティー・イベント' },
+  { id: 'other-special', label: 'その他の特別な日' },
+];
+
+const moodOptions: Option[] = [
+  { id: 'cute', label: 'かわいい' },
+  { id: 'adult-cute', label: '大人かわいい' },
+  { id: 'cool', label: 'クール' },
+  { id: 'nuance', label: 'ニュアンス系' }, // 追加
+];
+
+const designTypeOptions: Option[] = [
+  { id: 'simple', label: 'シンプル' },
+  { id: 'bijou', label: 'ビジュー' },
+  { id: 'korean', label: '韓国っぽ' },
+  { id: 'art', label: 'ニュアンスアート' },
+  { id: 'japanese', label: '和柄' },   // 追加
+  { id: 'magnet', label: 'マグネット' }, // 追加
+];
+
+const shapeOptions: Option[] = [
+  { id: 'short-square', label: 'ショート × スクエア' },
+  { id: 'short-oval', label: 'ショート × オーバル' },
+  { id: 'middle-oval', label: 'ミディアム × オーバル' },
+  { id: 'long-coffin', label: 'ロング × コフィン' },
+];
+
+const baseCardStyle: React.CSSProperties = {
+  borderRadius: 16,
+  border: '1px solid #f4d6db',
+  padding: '20px 20px 16px',
+  background: '#fff',
+  marginBottom: 24,
 };
 
-function generateDesignIdeas(answers: Answers): string[] {
-  const ideas: string[] = [];
+const cardGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+  gap: 12,
+  marginTop: 16,
+};
 
-  const scene = answers.scene;
-  const vibe = answers.vibe;
-  const baseColor = answers.baseColor;
-  const designType = answers.designType;
-  const lengthShape = answers.lengthShape;
-  const motif = answers.motif;
+type CardProps = {
+  option: Option;
+  selected: boolean;
+  onClick: () => void;
+};
 
-  let mainLine = 'シーンに合った、';
-
-  if (vibe === 'cute') mainLine += 'ガーリーでかわいい雰囲気の';
-  else if (vibe === 'elegant') mainLine += '大人っぽく上品な雰囲気の';
-  else if (vibe === 'cool') mainLine += 'クールでスタ性的な';
-  else if (vibe === 'korean') mainLine += '韓国っぽいトレンド感のある';
-  else if (vibe === 'nuance') mainLine += 'ニュアンス感たっぷりの';
-  else if (vibe === 'natural') mainLine += 'ナチュラルで普段使いしやすい';
-  else mainLine += 'バランスよく仕上げた';
-
-  mainLine += 'ネイルチップをご提案します。';
-
-  if (baseColor && baseColor !== 'any') {
-    const colorLabelMap: Record<string, string> = {
-      pink: 'ピンク系',
-      beige: 'ベージュ・ブラウン系',
-      white: 'ホワイト・グレー系',
-      blue: 'ブルー・パープル系',
-      black: 'ブラック系',
-      other: 'お好みのカラー',
-    };
-    const label = colorLabelMap[baseColor] ?? 'お好みのカラー';
-    mainLine += ` ベースカラーは「${label}」をメインに想定しています。`;
-  }
-
-  if (scene === 'special' && answers.specialDetail) {
-    const detailLabelMap: Record<string, string> = {
-      bridal: 'ブライダル',
-      comingofage: '前撮り・成人式',
-      party: 'パーティー / 同窓会',
-      stage: '発表会・ステージ',
-      otherSpecial: 'その他の特別な日',
-    };
-    const detailLabel = detailLabelMap[answers.specialDetail] ?? '特別な日';
-    mainLine += ` 特に「${detailLabel}」に合う華やかさと上品さを意識します。`;
-  }
-
-  ideas.push(mainLine);
-
-  if (designType === 'wagara') {
-    ideas.push('和柄モチーフをさりげなく取り入れた、写真映えする和テイストデザイン。');
-  } else if (designType === 'magnet') {
-    ideas.push('マグネットのきらめきを活かした、角度によって表情が変わるうるツヤネイル。');
-  } else if (designType === 'gradation') {
-    ideas.push('指先がきれいに見えるグラデーションで、オンオフともに使いやすい仕上がりに。');
-  } else if (designType === 'french') {
-    ideas.push('先端にさりげなくポイントを置いたフレンチデザインで、上品に指先を強調。');
-  }
-
-  if (lengthShape && lengthShape !== 'any') {
-    const lengthLabelMap: Record<string, string> = {
-      'short-round': 'ショート × ラウンド',
-      'short-square': 'ショート × スクエア',
-      'medium-oval': 'ミディアム × オーバル',
-      'long-ballerina': 'ロング × バレリーナ / ポイント',
-    };
-    const lengthLabel = lengthLabelMap[lengthShape] ?? lengthShape;
-    ideas.push(`チップの長さ・形は「${lengthLabel}」のイメージでデザインします。`);
-  }
-
-  if (motif && motif !== 'none' && motif !== 'any') {
-    const motifLabelMap: Record<string, string> = {
-      heart: 'ハート',
-      ribbon: 'リボン',
-      flower: 'フラワー',
-      animal: 'アニマル柄',
-      magnetMirror: 'マグネット / ミラー / オーロラ',
-    };
-    const label = motifLabelMap[motif] ?? motif;
-    ideas.push(`ワンポイントで「${label}」モチーフを入れて、さりげなく個性をプラスします。`);
-  }
-
-  if (ideas.length === 0) {
-    ideas.push('入力いただいた条件をもとに、バランスの良いネイルチップデザインをご提案します。');
-  }
-
-  return ideas;
-}
+const SelectCard: React.FC<CardProps> = ({ option, selected, onClick }) => {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        borderRadius: 12,
+        border: selected ? '2px solid #ff9fb6' : '1px solid #f2d7de',
+        padding: '12px 10px',
+        background: selected ? '#fff5f8' : '#fff',
+        cursor: 'pointer',
+        textAlign: 'left',
+        fontSize: 14,
+        lineHeight: 1.5,
+      }}
+    >
+      <div style={{ fontWeight: 600 }}>{option.label}</div>
+      {option.description && (
+        <div style={{ fontSize: 12, color: '#777', marginTop: 4 }}>
+          {option.description}
+        </div>
+      )}
+    </button>
+  );
+};
 
 export default function TryPage() {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Answers>({});
-  const [isFinished, setIsFinished] = useState(false);
-  const [handImage, setHandImage] = useState<string | null>(null);
+  const [scene, setScene] = useState<string>('omakase');
+  const [specialScene, setSpecialScene] = useState<string | null>(null);
+  const [mood, setMood] = useState<string>('adult-cute');
+  const [designType, setDesignType] = useState<string>('simple');
+  const [shape, setShape] = useState<string>('short-oval');
+  const [showResult, setShowResult] = useState<boolean>(false);
 
-  const visibleQuestions = questions.filter((q) => {
-    if (!q.dependsOn) return true;
-    const depValue = answers[q.dependsOn.id];
-    return depValue === q.dependsOn.value;
-  });
+  const getLabel = (options: Option[], id: string | null | undefined) =>
+    options.find((o) => o.id === id)?.label ?? '—';
 
-  const currentQuestion = visibleQuestions[step];
+  const sceneLabel =
+    scene === 'special'
+      ? `特別な日（${getLabel(specialSceneOptions, specialScene)}）`
+      : getLabel(sceneOptions, scene);
 
-  const handleSelect = (value: string) => {
-    const q = currentQuestion;
-    if (!q) return;
+  const moodLabel = getLabel(moodOptions, mood);
+  const designTypeLabel = getLabel(designTypeOptions, designType);
+  const shapeLabel = getLabel(shapeOptions, shape);
 
-    const nextAnswers: Answers = {
-      ...answers,
-      [q.id]: value,
-    };
-    setAnswers(nextAnswers);
-
-    if (step === visibleQuestions.length - 1) {
-      setIsFinished(true);
-    } else {
-      setStep(step + 1);
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowResult(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const handleBack = () => {
-    if (step === 0) return;
-    setStep(step - 1);
-  };
-
-  const handleRestart = () => {
-    setStep(0);
-    setAnswers({});
-    setIsFinished(false);
-    setHandImage(null);
-  };
-
-  const handleHandImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    setHandImage(url);
-  };
-
-  const designIdeas = isFinished ? generateDesignIdeas(answers) : [];
 
   return (
     <main
@@ -266,202 +127,344 @@ export default function TryPage() {
         fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
       }}
     >
-      <h1 style={{ fontSize: 28, marginBottom: 16 }}>無料デザイン診断</h1>
-      <p style={{ marginBottom: 24, fontSize: 14, lineHeight: 1.7 }}>
-        いくつかの質問に答えると、AIがあなたの好みに合わせたネイルチップのデザイン条件を整理し、
-        テキストでデザイン案をお出しします。今後はここからそのままオーダーできるようにしていきます。
-      </p>
-
-      {/* 質問ステップ or 結果 */}
-      {!isFinished && currentQuestion && (
-        <section
+      {/* ページタイトル */}
+      <section style={{ marginBottom: 32 }}>
+        <h1
           style={{
-            borderRadius: 16,
-            border: '1px solid #eee',
-            padding: 24,
-            marginBottom: 24,
+            fontSize: 24,
+            fontWeight: 700,
+            marginBottom: 8,
           }}
         >
-          <p
-            style={{
-              fontSize: 14,
-              marginBottom: 8,
-              color: '#888',
-            }}
-          >
-            質問 {step + 1} / {visibleQuestions.length}
-          </p>
-          <h2 style={{ fontSize: 20, marginBottom: 16 }}>{currentQuestion.title}</h2>
+          無料AIデザイン診断
+        </h1>
+        <p style={{ fontSize: 14, color: '#666', lineHeight: 1.7 }}>
+          いくつかの質問に答えると、AIがあなたの好みに合わせてネイルチップのデザイン案を考えます。
+          そのままオーダーできる形まで少しずつアップデートしていきます。
+        </p>
+      </section>
 
-          <div
+      {/* フォーム本体 */}
+      <form onSubmit={handleSubmit}>
+        {/* Q1 シーン */}
+        <section style={baseCardStyle}>
+          <h2
             style={{
-              display: 'grid',
-              gap: 12,
+              fontSize: 18,
+              fontWeight: 700,
+              marginBottom: 4,
             }}
           >
-            {currentQuestion.options.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => handleSelect(opt.value)}
+            Q1. どんなシーンで使うネイル？
+          </h2>
+          <p style={{ fontSize: 13, color: '#777' }}>
+            「特別な日」を選ぶと、さらに詳しくシーンを選べます。
+          </p>
+
+          <div style={cardGridStyle}>
+            {sceneOptions.map((opt) => (
+              <SelectCard
+                key={opt.id}
+                option={opt}
+                selected={scene === opt.id}
+                onClick={() => setScene(opt.id)}
+              />
+            ))}
+          </div>
+
+          {scene === 'special' && (
+            <div style={{ marginTop: 16 }}>
+              <div
                 style={{
-                  textAlign: 'left',
-                  padding: '12px 16px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  marginBottom: 8,
+                }}
+              >
+                特別な日の内容を教えてください
+              </div>
+              <div style={cardGridStyle}>
+                {specialSceneOptions.map((opt) => (
+                  <SelectCard
+                    key={opt.id}
+                    option={opt}
+                    selected={specialScene === opt.id}
+                    onClick={() => setSpecialScene(opt.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Q2 雰囲気 */}
+        <section style={baseCardStyle}>
+          <h2
+            style={{
+              fontSize: 18,
+              fontWeight: 700,
+              marginBottom: 4,
+            }}
+          >
+            Q2. なりたい雰囲気は？
+          </h2>
+          <p style={{ fontSize: 13, color: '#777' }}>
+            直感で近いものを選んでください。ニュアンス系は「ふんわり」「抜け感」のある雰囲気です。
+          </p>
+
+          <div style={cardGridStyle}>
+            {moodOptions.map((opt) => (
+              <SelectCard
+                key={opt.id}
+                option={opt}
+                selected={mood === opt.id}
+                onClick={() => setMood(opt.id)}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Q3 デザインタイプ（Q4だったもの） */}
+        <section style={baseCardStyle}>
+          <h2
+            style={{
+              fontSize: 18,
+              fontWeight: 700,
+              marginBottom: 4,
+            }}
+          >
+            Q3. 好きなデザインタイプは？
+          </h2>
+          <p style={{ fontSize: 13, color: '#777' }}>
+            複数タイプが好きでも、今一番やってみたいテイストを選んでください。
+          </p>
+
+          <div style={cardGridStyle}>
+            {designTypeOptions.map((opt) => (
+              <SelectCard
+                key={opt.id}
+                option={opt}
+                selected={designType === opt.id}
+                onClick={() => setDesignType(opt.id)}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Q4 チップの形・長さ（元Q6） */}
+        <section style={baseCardStyle}>
+          <h2
+            style={{
+              fontSize: 18,
+              fontWeight: 700,
+              marginBottom: 4,
+            }}
+          >
+            Q4. チップの長さと形は？
+          </h2>
+          <p style={{ fontSize: 13, color: '#777' }}>
+            後から変更もできるので、普段よく使う長さ・形を選んでください。
+            <br />
+            （今はテキスト表示だけですが、今後ここに実物イメージの画像を入れていきます）
+          </p>
+
+          <div style={cardGridStyle}>
+            {shapeOptions.map((opt) => (
+              <SelectCard
+                key={opt.id}
+                option={opt}
+                selected={shape === opt.id}
+                onClick={() => setShape(opt.id)}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* 送信ボタン */}
+        <div style={{ textAlign: 'center', marginTop: 24, marginBottom: 40 }}>
+          <button
+            type="submit"
+            style={{
+              display: 'inline-block',
+              padding: '14px 40px',
+              borderRadius: 999,
+              border: 'none',
+              background:
+                'linear-gradient(90deg, #ff8fb1, #ffb3c8)',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: 15,
+              boxShadow: '0 10px 20px rgba(255, 143, 177, 0.25)',
+              cursor: 'pointer',
+            }}
+          >
+            デザイン案を見る
+          </button>
+          <p style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
+            ※まだテスト版のため、この結果から直接オーダーはできません
+          </p>
+        </div>
+      </form>
+
+      {/* デザイン案エリア */}
+      {showResult && (
+        <>
+          <section
+            style={{
+              ...baseCardStyle,
+              background: '#fff7f9',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                marginBottom: 8,
+              }}
+            >
+              あなたへのAIデザイン案
+            </h2>
+            <p style={{ fontSize: 14, color: '#555', lineHeight: 1.8 }}>
+              入力してもらった内容をもとに、こんなイメージのネイルチップを想定しています。
+            </p>
+
+            <ul
+              style={{
+                marginTop: 12,
+                paddingLeft: 20,
+                fontSize: 14,
+                lineHeight: 1.8,
+                color: '#444',
+              }}
+            >
+              <li>
+                シーン：
+                <b>{sceneLabel}</b> に合わせたデザイン。
+              </li>
+              <li>
+                雰囲気：
+                <b>{moodLabel}</b> な印象になるよう、色味や質感を調整します。
+              </li>
+              <li>
+                デザインタイプ：
+                <b>{designTypeLabel}</b> をベースに、バランス良く配置します。
+              </li>
+              <li>
+                チップ：
+                <b>{shapeLabel}</b> を想定してデザインします。
+              </li>
+            </ul>
+
+            <p
+              style={{
+                fontSize: 13,
+                color: '#777',
+                marginTop: 8,
+              }}
+            >
+              ※今後は、ここに具体的な「デザイン案1〜3」の画像や詳細テキストが表示されるようにしていきます。
+            </p>
+          </section>
+
+          {/* 手の写真アップロード（ベータ） */}
+          <section style={{ ...baseCardStyle, marginTop: 24 }}>
+            <h2
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                marginBottom: 8,
+              }}
+            >
+              手の写真から着画イメージを作る（ベータ）
+            </h2>
+            <p style={{ fontSize: 14, color: '#555', lineHeight: 1.8 }}>
+              指先が写った写真をアップロードすると、将来的には
+              「あなたの手にネイルチップをつけたイメージ画像」をAIで生成できるようにしていきます。
+              現在はテスト版として、アップロードした写真をプレビュー表示するところまでを想定しています。
+            </p>
+
+            <div style={{ textAlign: 'center', marginTop: 16 }}>
+              <button
+                type="button"
+                style={{
+                  display: 'inline-block',
+                  padding: '12px 28px',
                   borderRadius: 999,
-                  border: '1px solid #ddd',
-                  backgroundColor: '#fff',
+                  border: '1px solid #ffb3c8',
+                  background: '#fff',
+                  color: '#ff6f9b',
+                  fontWeight: 600,
                   fontSize: 14,
                   cursor: 'pointer',
                 }}
               >
-                {opt.label}
+                手の写真を選ぶ
               </button>
-            ))}
-          </div>
-
-          <div
-            style={{
-              marginTop: 16,
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: 13,
-            }}
-          >
-            <button
-              onClick={handleBack}
-              disabled={step === 0}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                color: step === 0 ? '#ccc' : '#555',
-                textDecoration: step === 0 ? 'none' : 'underline',
-                cursor: step === 0 ? 'default' : 'pointer',
-              }}
-            >
-              ← 前の質問に戻る
-            </button>
-            <span style={{ color: '#888' }}>タップすると次の質問に進みます</span>
-          </div>
-        </section>
-      )}
-
-      {/* 結果＆着画アップロードエリア */}
-      {isFinished && (
-        <section
-          style={{
-            borderRadius: 16,
-            border: '1px solid #eee',
-            padding: 24,
-            marginBottom: 24,
-          }}
-        >
-          <h2 style={{ fontSize: 20, marginBottom: 8 }}>あなたへのAIデザイン案</h2>
-          <p style={{ fontSize: 14, marginBottom: 16 }}>
-            入力してもらった内容をもとに、こんなイメージのネイルチップを想定しています。
-          </p>
-
-          <ul style={{ listStyle: 'disc', paddingLeft: 20, marginBottom: 24 }}>
-            {designIdeas.map((idea, i) => (
-              <li key={i} style={{ marginBottom: 8, fontSize: 14 }}>
-                {idea}
-              </li>
-            ))}
-          </ul>
-
-          <hr style={{ margin: '16px 0' }} />
-
-          <h3 style={{ fontSize: 18, marginBottom: 8 }}>手の写真から着画イメージを作る（ベータ）</h3>
-          <p style={{ fontSize: 13, marginBottom: 12, color: '#666' }}>
-            指先が写った写真をアップロードすると、
-            将来的には「あなたの手にネイルチップをつけたイメージ画像」をAIで生成できるようにしていきます。
-            現在はテスト版として、アップロードした写真をプレビュー表示しています。
-          </p>
-
-          <label
-            style={{
-              display: 'inline-block',
-              padding: '10px 18px',
-              borderRadius: 999,
-              border: '1px solid #ff9cae',
-              background: '#ffeef2',
-              fontSize: 14,
-              cursor: 'pointer',
-              marginBottom: 16,
-            }}
-          >
-            手の写真を選ぶ
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleHandImageChange}
-              style={{ display: 'none' }}
-            />
-          </label>
-
-          {handImage && (
-            <div
-              style={{
-                marginTop: 12,
-                borderRadius: 12,
-                border: '1px solid #eee',
-                padding: 12,
-              }}
-            >
-              <p style={{ fontSize: 13, marginBottom: 8, color: '#666' }}>
-                現在はアップロードした写真そのものを表示しています。
-                今後ここに「ネイルチップを装着した着画イメージ」を表示できるように開発していきます。
-              </p>
-              <img
-                src={handImage}
-                alt="hand preview"
+              <p
                 style={{
-                  width: '100%',
-                  maxHeight: 320,
-                  objectFit: 'contain',
-                  borderRadius: 8,
+                  fontSize: 12,
+                  color: '#999',
+                  marginTop: 8,
                 }}
-              />
+              >
+                ※まだ動作しません。今後、画像アップロード &amp; AI生成機能を追加予定です。
+              </p>
             </div>
-          )}
+          </section>
 
-          <h3 style={{ fontSize: 18, marginTop: 24, marginBottom: 8 }}>選んだ条件まとめ</h3>
-          <p style={{ fontSize: 13, marginBottom: 8, color: '#666' }}>
-            ここでは、選んだ条件を一覧で確認できます。
-          </p>
-          <ul style={{ listStyle: 'none', padding: 0, fontSize: 14 }}>
-            {questions
-              .filter((q) => answers[q.id])
-              .map((q) => {
-                const opt = q.options.find((o) => o.value === answers[q.id]);
-                return (
-                  <li
-                    key={q.id}
-                    style={{
-                      padding: '8px 0',
-                      borderBottom: '1px solid #f2f2f2',
-                    }}
-                  >
-                    <div style={{ color: '#999', marginBottom: 2 }}>{q.title}</div>
-                    <div>{opt ? opt.label : answers[q.id]}</div>
-                  </li>
-                );
-              })}
-          </ul>
-
-          <button
-            onClick={handleRestart}
+          {/* 選んだ条件まとめ */}
+          <section
             style={{
+              ...baseCardStyle,
               marginTop: 24,
-              padding: '10px 20px',
-              borderRadius: 999,
-              border: '1px solid #333',
-              backgroundColor: '#fff',
-              fontSize: 14,
-              cursor: 'pointer',
             }}
           >
-            もう一度やり直す
-          </button>
-        </section>
+            <h2
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                marginBottom: 8,
+              }}
+            >
+              選んだ条件まとめ
+            </h2>
+
+            <dl
+              style={{
+                fontSize: 14,
+                lineHeight: 1.8,
+              }}
+            >
+              <div style={{ marginBottom: 8 }}>
+                <dt style={{ fontWeight: 600, color: '#777' }}>
+                  どんなシーンで使うネイル？
+                </dt>
+                <dd>{sceneLabel}</dd>
+              </div>
+
+              <div style={{ marginBottom: 8 }}>
+                <dt style={{ fontWeight: 600, color: '#777' }}>
+                  なりたい雰囲気
+                </dt>
+                <dd>{moodLabel}</dd>
+              </div>
+
+              <div style={{ marginBottom: 8 }}>
+                <dt style={{ fontWeight: 600, color: '#777' }}>
+                  デザインタイプ
+                </dt>
+                <dd>{designTypeLabel}</dd>
+              </div>
+
+              <div style={{ marginBottom: 8 }}>
+                <dt style={{ fontWeight: 600, color: '#777' }}>
+                  チップの長さ・形
+                </dt>
+                <dd>{shapeLabel}</dd>
+              </div>
+            </dl>
+          </section>
+        </>
       )}
     </main>
   );
