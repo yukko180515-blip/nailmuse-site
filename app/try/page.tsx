@@ -2,6 +2,10 @@
 
 import React, { useState, ChangeEvent } from 'react';
 import { questions, TOTAL_STEPS, Question, Option } from './questions';
+import {
+  referenceImageSets,
+  ReferenceImageSet,
+} from './referenceImages';
 
 type AnswerMap = Record<string, string>;
 
@@ -13,6 +17,32 @@ const mainQuestionOrder = [
   'lengthShape',
   'chipType',
 ];
+
+// 回答に一番マッチする参考画像セットを取得
+const getReferenceImageSet = (answers: AnswerMap): ReferenceImageSet | undefined => {
+  const vibe = answers['vibe'];
+  const color = answers['color'];
+  const designType = answers['designType'];
+
+  // 条件にマッチするものを探す
+  const matched = referenceImageSets.find((set) => {
+    const m = set.match;
+
+    const vibeOk =
+      !m.vibe || !vibe ? !m.vibe : m.vibe.includes(vibe);
+    const colorOk =
+      !m.color || !color ? !m.color : m.color.includes(color);
+    const designOk =
+      !m.designType || !designType
+        ? !m.designType
+        : m.designType.includes(designType);
+
+    return vibeOk && colorOk && designOk;
+  });
+
+  // 見つからなければ fallback を使う
+  return matched ?? referenceImageSets.find((s) => s.id === 'fallback');
+};
 
 export default function TryNailDesign() {
   const [currentQuestionId, setCurrentQuestionId] = useState<string>(
@@ -39,13 +69,11 @@ export default function TryNailDesign() {
 
     const q = currentQuestion;
 
-    // 回答を保存
     setAnswers((prev) => ({
       ...prev,
       [q.id]: selectedOptionId,
     }));
 
-    // 進捗（何問完了したか）
     setAnsweredCount((prev) => {
       if (q.step > prev) {
         return q.step;
@@ -53,7 +81,6 @@ export default function TryNailDesign() {
       return prev;
     });
 
-    // Q1で「特別な日」が選ばれたら、サブ質問へ
     if (
       q.id === 'scene' &&
       selectedOptionId === 'special' &&
@@ -64,26 +91,22 @@ export default function TryNailDesign() {
       return;
     }
 
-    // 次のメイン質問へ
     const nextMainQuestion = getNextMainQuestion(q);
 
     if (nextMainQuestion) {
       setCurrentQuestionId(nextMainQuestion.id);
       setSelectedOptionId('');
     } else {
-      // 全問終了
       setIsFinished(true);
     }
   };
 
   const getNextMainQuestion = (q: Question): Question | undefined => {
-    // specialScene のときも step は 1 なので、
-    // 「自分より step が大きいメイン質問」を探す
     const next = questions
       .filter(
         (item) =>
           item.step > q.step &&
-          mainQuestionOrder.includes(item.id) // メイン質問だけ
+          mainQuestionOrder.includes(item.id)
       )
       .sort((a, b) => a.step - b.step)[0];
 
@@ -105,6 +128,8 @@ export default function TryNailDesign() {
     setIsFinished(false);
     setHandImageUrl(null);
   };
+
+  const referenceSet = getReferenceImageSet(answers);
 
   return (
     <main
@@ -142,7 +167,7 @@ export default function TryNailDesign() {
         </p>
       </section>
 
-      {/* まだ質問中のとき */}
+      {/* 質問ウィザード */}
       {!isFinished && (
         <section
           style={{
@@ -190,7 +215,7 @@ export default function TryNailDesign() {
             </div>
           </div>
 
-          {/* 質問テキスト */}
+          {/* 質問文 */}
           <div style={{ marginBottom: 16 }}>
             <h2
               style={{
@@ -237,7 +262,8 @@ export default function TryNailDesign() {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 4,
-                    transition: 'background 0.15s ease, border 0.15s ease',
+                    transition:
+                      'background 0.15s ease, border 0.15s ease',
                   }}
                 >
                   <span
@@ -257,7 +283,6 @@ export default function TryNailDesign() {
                       {option.description}
                     </span>
                   )}
-                  {/* 画像付きの選択肢（Q6）用：今は画像なしでもOK */}
                   {option.image && (
                     <span
                       style={{
@@ -285,7 +310,7 @@ export default function TryNailDesign() {
             </p>
           )}
 
-          {/* 次へボタン */}
+          {/* 次へ */}
           <div style={{ textAlign: 'center' }}>
             <button
               type="button"
@@ -316,9 +341,10 @@ export default function TryNailDesign() {
         </section>
       )}
 
-      {/* 全部答え終わったあと */}
+      {/* 結果画面 */}
       {isFinished && (
         <>
+          {/* AIデザイン案＋参考画像 */}
           <section
             style={{
               marginTop: 24,
@@ -348,7 +374,7 @@ export default function TryNailDesign() {
                 あなたへのAIデザイン案
               </h2>
               <button
-                type="button"
+                type="button'
                 onClick={resetAll}
                 style={{
                   border: 'none',
@@ -387,24 +413,121 @@ export default function TryNailDesign() {
               }}
             >
               <li>
-                シーンに合わせて、雰囲気やカラーを調整した「大人かわいい」デザイン。
+                シーンや雰囲気に合わせて、ベースカラーやパーツ量をバランスよく調整します。
               </li>
               <li>
-                和柄・マグネット・ミラーなど、お好みの要素をさりげなく取り入れます。
+                和柄・マグネット・ミラーなど、お好みの要素をさりげなく取り入れたデザインを想定しています。
               </li>
               <li>
-                実際には、ここに「SNSで人気のネイルチップ写真」を参考として並べて表示する予定です。
+                実際のオーダー時には、この条件をもとにクリエイターがデザインを具体化していきます。
               </li>
             </ul>
+
+            {/* 参考ネイルチップ画像 */}
+            {referenceSet && (
+              <div
+                style={{
+                  marginTop: 16,
+                  borderRadius: 16,
+                  border: '1px solid #f0dde3',
+                  padding: 14,
+                  background: '#fff7f9',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    marginBottom: 4,
+                  }}
+                >
+                  参考ネイルチップ画像（サンプル）
+                </h3>
+                <p
+                  style={{
+                    fontSize: 12,
+                    color: '#666',
+                    lineHeight: 1.7,
+                    marginBottom: 10,
+                  }}
+                >
+                  条件に近いイメージのネイルチップ写真です。
+                  <br />
+                  現在は仮の画像パスになっているため、実際の作品写真と差し替えてご利用ください。
+                </p>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns:
+                      'repeat(auto-fit, minmax(120px, 1fr))',
+                    gap: 10,
+                    marginTop: 6,
+                  }}
+                >
+                  {referenceSet.images.map((img) => (
+                    <figure
+                      key={img.src}
+                      style={{
+                        margin: 0,
+                        borderRadius: 12,
+                        overflow: 'hidden',
+                        border: '1px solid #f0dde3',
+                        background: '#fff',
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          height: 'auto',
+                          aspectRatio: '3 / 4',
+                          objectFit: 'cover',
+                        }}
+                      />
+                      {img.caption && (
+                        <figcaption
+                          style={{
+                            fontSize: 11,
+                            color: '#777',
+                            padding: '6px 6px 8px',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {img.caption}
+                        </figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+
+                {referenceSet.note && (
+                  <p
+                    style={{
+                      fontSize: 11,
+                      color: '#999',
+                      marginTop: 8,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {referenceSet.note}
+                  </p>
+                )}
+              </div>
+            )}
 
             <p
               style={{
                 fontSize: 12,
                 color: '#888',
                 lineHeight: 1.7,
+                marginTop: 12,
               }}
             >
-              ※今はサンプルテキストのみですが、今後は実際の作品画像をもとに、より具体的なAI提案テキストと参考画像をここに表示していきます。
+              ※今後は、ここに「実際のクリエイター作品」や「AIが提案した具体的なデザイン案」を並べて表示していきます。
             </p>
           </section>
 
@@ -479,7 +602,7 @@ export default function TryNailDesign() {
               >
                 {/* 実際には、ここでAI合成した「着画イメージ」を表示していく想定 */}
                 {/* 今はアップロード画像をそのまま表示 */}
-                // eslint-disable-next-line @next/next/no-img-element
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={handImageUrl}
                   alt="アップロードした手の写真"
@@ -564,7 +687,6 @@ export default function TryNailDesign() {
                 );
               })}
 
-              {/* 特別な日の内訳（選んだ人だけ） */}
               {answers['scene'] === 'special' && (
                 <div
                   style={{
