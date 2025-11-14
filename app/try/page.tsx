@@ -52,7 +52,7 @@ export default function TryPage() {
   const [nuance, setNuance] = useState('');
   const [designType, setDesignType] = useState('');
   const [parts, setParts] = useState('');
-  const [shape, setShape] = useState '';
+  const [shape, setShape] = useState(''); // ← ここを修正
 
   const resetAll = () => {
     setScene('');
