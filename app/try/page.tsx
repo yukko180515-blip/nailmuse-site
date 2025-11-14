@@ -34,7 +34,7 @@ const designTypeOptions: Option[] = [
   { id: 'bijou', label: 'ビジュー' },
   { id: 'korean', label: '韓国っぽ' },
   { id: 'art', label: 'ニュアンスアート' },
-  { id: 'japanese', label: '和柄' },   // 追加
+  { id: 'japanese', label: '和柄' }, // 追加
   { id: 'magnet', label: 'マグネット' }, // 追加
 ];
 
@@ -92,6 +92,32 @@ const SelectCard: React.FC<CardProps> = ({ option, selected, onClick }) => {
   );
 };
 
+// AIに送る指示テキストを組み立てる
+const buildPromptText = (
+  sceneLabel: string,
+  moodLabel: string,
+  designTypeLabel: string,
+  shapeLabel: string
+) => {
+  const lines = [
+    'あなたはプロのネイルデザイナーです。',
+    '次の条件に合うネイルチップのデザイン案を 3〜5 個、日本語で提案してください。',
+    '',
+    `■使うシーン: ${sceneLabel}`,
+    `■なりたい雰囲気: ${moodLabel}`,
+    `■デザインタイプ: ${designTypeLabel}`,
+    `■チップの長さ・形: ${shapeLabel}`,
+    '',
+    'それぞれの案について、',
+    '・ベースカラー',
+    '・アートやパーツの内容',
+    '・配置のイメージ（どの指に何を置くか など）',
+    '・どんな人／シーンにおすすめか',
+    'を、1案ずつ箇条書きで書いてください。',
+  ];
+  return lines.join('\n');
+};
+
 export default function TryPage() {
   const [scene, setScene] = useState<string>('omakase');
   const [specialScene, setSpecialScene] = useState<string | null>(null);
@@ -99,6 +125,9 @@ export default function TryPage() {
   const [designType, setDesignType] = useState<string>('simple');
   const [shape, setShape] = useState<string>('short-oval');
   const [showResult, setShowResult] = useState<boolean>(false);
+
+  const [promptText, setPromptText] = useState<string>('');
+  const [copied, setCopied] = useState<boolean>(false);
 
   const getLabel = (options: Option[], id: string | null | undefined) =>
     options.find((o) => o.id === id)?.label ?? '—';
@@ -114,8 +143,26 @@ export default function TryPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const prompt = buildPromptText(
+      sceneLabel,
+      moodLabel,
+      designTypeLabel,
+      shapeLabel
+    );
+    setPromptText(prompt);
     setShowResult(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(promptText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      console.error(err);
+      alert('コピーに失敗しました…（ブラウザの制限かもしれません）');
+    }
   };
 
   return (
@@ -124,7 +171,8 @@ export default function TryPage() {
         maxWidth: 800,
         margin: '0 auto',
         padding: '40px 16px 80px',
-        fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+        fontFamily:
+          'Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
       }}
     >
       {/* ページタイトル */}
@@ -224,7 +272,7 @@ export default function TryPage() {
           </div>
         </section>
 
-        {/* Q3 デザインタイプ（Q4だったもの） */}
+        {/* Q3 デザインタイプ */}
         <section style={baseCardStyle}>
           <h2
             style={{
@@ -251,7 +299,7 @@ export default function TryPage() {
           </div>
         </section>
 
-        {/* Q4 チップの形・長さ（元Q6） */}
+        {/* Q4 チップの形・長さ */}
         <section style={baseCardStyle}>
           <h2
             style={{
@@ -289,8 +337,7 @@ export default function TryPage() {
               padding: '14px 40px',
               borderRadius: 999,
               border: 'none',
-              background:
-                'linear-gradient(90deg, #ff8fb1, #ffb3c8)',
+              background: 'linear-gradient(90deg, #ff8fb1, #ffb3c8)',
               color: '#fff',
               fontWeight: 600,
               fontSize: 15,
@@ -309,6 +356,7 @@ export default function TryPage() {
       {/* デザイン案エリア */}
       {showResult && (
         <>
+          {/* AIデザイン案（説明） */}
           <section
             style={{
               ...baseCardStyle,
@@ -364,6 +412,82 @@ export default function TryPage() {
             >
               ※今後は、ここに具体的な「デザイン案1〜3」の画像や詳細テキストが表示されるようにしていきます。
             </p>
+          </section>
+
+          {/* AIに送る指示テキスト */}
+          <section
+            style={{
+              ...baseCardStyle,
+              marginTop: 24,
+            }}
+          >
+            <h2
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                marginBottom: 8,
+              }}
+            >
+              AIに送る指示テキスト
+            </h2>
+            <p style={{ fontSize: 13, color: '#777', lineHeight: 1.7 }}>
+              下のテキストをそのままコピーして、ChatGPT などのAIに貼り付けると、
+              あなたの条件に合わせたネイルチップのデザイン案が返ってきます。
+            </p>
+
+            <textarea
+              readOnly
+              value={promptText}
+              style={{
+                width: '100%',
+                minHeight: 190,
+                marginTop: 12,
+                padding: 12,
+                borderRadius: 12,
+                border: '1px solid #f0cdd8',
+                fontSize: 13,
+                lineHeight: 1.7,
+                fontFamily:
+                  'SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                background: '#fffafc',
+                whiteSpace: 'pre-wrap',
+              }}
+            />
+
+            <div
+              style={{
+                marginTop: 10,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+              }}
+            >
+              <button
+                type="button"
+                onClick={handleCopy}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 999,
+                  border: 'none',
+                  background: '#ff9fb6',
+                  color: '#fff',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                テキストをコピー
+              </button>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: copied ? '#ff6f9b' : '#999',
+                  transition: 'color 0.2s',
+                }}
+              >
+                {copied ? 'コピーしました！' : '※AIチャットに貼り付けて使ってください'}
+              </span>
+            </div>
           </section>
 
           {/* 手の写真アップロード（ベータ） */}
