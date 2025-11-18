@@ -12,6 +12,75 @@ type Answers = {
   shape?: string;
 };
 
+// 英語のID → 日本語ラベルに変換するマップ
+const SCENE_LABELS: Record<string, string> = {
+  omakase: 'おまかせ',
+  daily: '普段使い',
+  office: 'オフィス',
+  special: '特別な日',
+};
+
+const SCENE_DETAIL_LABELS: Record<string, string> = {
+  bridal: 'ブライダル',
+  seijin: '成人式',
+  party: 'パーティー・イベント',
+  live: '推し活・ライブ',
+};
+
+const MOOD_LABELS: Record<string, string> = {
+  cute: 'かわいい',
+  clean: 'きれいめ',
+  adult: '大人っぽい',
+  feminine: 'フェミニン',
+  cool: 'クール',
+  nuance: 'ニュアンス',
+  casual: 'カジュアル',
+};
+
+const COLOR_LABELS: Record<string, string> = {
+  beige: 'ベージュ・ブラウン',
+  pink: 'ピンク',
+  white: 'ホワイト・クリア',
+  gray: 'グレー',
+  colorful: 'カラフル',
+  color_omakase: 'おまかせ',
+};
+
+const DESIGN_TYPE_LABELS: Record<string, string> = {
+  onecolor: 'ワンカラー',
+  gradation: 'グラデーション',
+  french: 'フレンチ',
+  glitter: 'ラメ・ホロ',
+  nuance_design: 'ニュアンス',
+  flower: 'フラワー',
+  pattern: '柄・アート',
+  wagara: '和柄',
+  magnet: 'マグネット',
+};
+
+const PARTS_LABELS: Record<string, string> = {
+  simple: 'パーツ控えめ',
+  rich: 'パーツしっかり',
+  matte: 'マット仕上げ',
+  glossy: 'ツヤツヤ仕上げ',
+  parts_omakase: 'おまかせ',
+};
+
+const SHAPE_LABELS: Record<string, string> = {
+  short_oval: 'ショートオーバル',
+  medium_oval: 'ミディアムオーバル',
+  long_oval: 'ロングオーバル',
+  short_square: 'ショートスクエア',
+  natural: '自爪に近い長さ',
+  shape_omakase: 'おまかせ',
+};
+
+// 共通：IDを日本語ラベルに変換するヘルパー
+const getLabel = (map: Record<string, string>, value?: string | null) => {
+  if (!value) return '未入力';
+  return map[value] ?? value;
+};
+
 export default function OrderPage() {
   const [answers, setAnswers] = useState<Answers | null>(null);
 
@@ -56,13 +125,12 @@ export default function OrderPage() {
           }}
         >
           さきほど診断で選んでいただいた条件をもとに、
-          <br />
           この内容でネイルチップをお作りします。
           お間違いがないかご確認ください。
         </p>
       </section>
 
-      {/* 診断内容がまだ読み込めていない場合 */}
+      {/* 診断データがない場合 */}
       {!answers && (
         <p
           style={{
@@ -79,9 +147,10 @@ export default function OrderPage() {
         </p>
       )}
 
+      {/* 診断データがある場合 */}
       {answers && (
         <>
-          {/* 条件のまとめ */}
+          {/* デザイン条件まとめ（ここが日本語表示になる） */}
           <section
             style={{
               marginBottom: 24,
@@ -109,6 +178,7 @@ export default function OrderPage() {
                 lineHeight: 1.9,
               }}
             >
+              {/* シーン */}
               <div
                 style={{
                   padding: '6px 0',
@@ -123,12 +193,18 @@ export default function OrderPage() {
                   シーン
                 </dt>
                 <dd style={{ margin: 0 }}>
-                  {answers.scene === 'special' && answers.sceneDetail
-                    ? `特別な日（${answers.sceneDetail}）`
-                    : answers.scene ?? '未入力'}
+                  {answers.scene === 'special'
+                    ? `特別な日（${
+                        getLabel(
+                          SCENE_DETAIL_LABELS,
+                          answers.sceneDetail || undefined
+                        ) || '内容未入力'
+                      }）`
+                    : getLabel(SCENE_LABELS, answers.scene)}
                 </dd>
               </div>
 
+              {/* 雰囲気 */}
               <div
                 style={{
                   padding: '6px 0',
@@ -142,9 +218,12 @@ export default function OrderPage() {
                 >
                   雰囲気
                 </dt>
-                <dd style={{ margin: 0 }}>{answers.mood ?? '未入力'}</dd>
+                <dd style={{ margin: 0 }}>
+                  {getLabel(MOOD_LABELS, answers.mood)}
+                </dd>
               </div>
 
+              {/* カラー */}
               <div
                 style={{
                   padding: '6px 0',
@@ -156,11 +235,14 @@ export default function OrderPage() {
                     fontWeight: 600,
                   }}
                 >
-                  カラー
+                  ベースカラー
                 </dt>
-                <dd style={{ margin: 0 }}>{answers.color ?? '未入力'}</dd>
+                <dd style={{ margin: 0 }}>
+                  {getLabel(COLOR_LABELS, answers.color)}
+                </dd>
               </div>
 
+              {/* デザインタイプ */}
               <div
                 style={{
                   padding: '6px 0',
@@ -174,9 +256,12 @@ export default function OrderPage() {
                 >
                   デザインタイプ
                 </dt>
-                <dd style={{ margin: 0 }}>{answers.designType ?? '未入力'}</dd>
+                <dd style={{ margin: 0 }}>
+                  {getLabel(DESIGN_TYPE_LABELS, answers.designType)}
+                </dd>
               </div>
 
+              {/* パーツ・質感 */}
               <div
                 style={{
                   padding: '6px 0',
@@ -190,9 +275,12 @@ export default function OrderPage() {
                 >
                   パーツ・質感
                 </dt>
-                <dd style={{ margin: 0 }}>{answers.parts ?? '未入力'}</dd>
+                <dd style={{ margin: 0 }}>
+                  {getLabel(PARTS_LABELS, answers.parts)}
+                </dd>
               </div>
 
+              {/* チップの形・長さ */}
               <div
                 style={{
                   padding: '6px 0',
@@ -206,7 +294,9 @@ export default function OrderPage() {
                 >
                   チップの形・長さ
                 </dt>
-                <dd style={{ margin: 0 }}>{answers.shape ?? '未入力'}</dd>
+                <dd style={{ margin: 0 }}>
+                  {getLabel(SHAPE_LABELS, answers.shape)}
+                </dd>
               </div>
             </dl>
           </section>
@@ -257,7 +347,7 @@ export default function OrderPage() {
             </ul>
           </section>
 
-          {/* Stripe 決済ボタンの置き場 */}
+          {/* お支払いへ（Stripeリンク置き場） */}
           <section
             style={{
               background: '#fff',
@@ -288,7 +378,7 @@ export default function OrderPage() {
               （テスト段階では、まだ実際の決済は行われません）
             </p>
 
-            {/* Stripe の支払いリンクを発行したら、href にそのURLを入れる */}
+            {/* Stripeの支払いリンクを発行したら、href をそのURLに変更 */}
             <a
               href="#"
               style={{
