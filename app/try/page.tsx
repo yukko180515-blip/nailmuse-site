@@ -618,7 +618,7 @@ function ResultSection({ answers }: ResultSectionProps) {
         marginBottom: 80,
       }}
     >
-      {/* 選んだ条件のまとめ（ダイジェスト） */}
+      {/* 選んだ条件のまとめ */}
       <section
         style={{
           background: '#fff',
@@ -635,7 +635,7 @@ function ResultSection({ answers }: ResultSectionProps) {
             color: '#b6657a',
           }}
         >
-          選んだ条件のまとめ（ダイジェスト）
+          選んだ条件のまとめ
         </p>
         <ul className="text-gray-700 space-y-1">
           <li>・シーン：{sceneLabel || 'おまかせ'}</li>
