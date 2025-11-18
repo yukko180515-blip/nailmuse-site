@@ -387,40 +387,42 @@ function QuestionStep(props: QuestionStepProps) {
         {step.caption}
       </p>
 
-      {/* ここが選択肢 */}
-      {renderOptions()}
+      {/* ここで選択肢 */}
+{renderOptions()}
 
-      {/* 参考画像エリア（あとでSNS画像を入れる場所） */}
-      <div
-        style={{
-          marginTop: 24,
-          padding: 16,
-          borderRadius: 16,
-          border: '1px dashed #ffd1e0',
-          background: '#fff',
-        }}
-      >
-        <p
-          style={{
-            fontSize: 12,
-            color: '#b28b96',
-            marginBottom: 4,
-            fontWeight: 600,
-          }}
-        >
-          参考ネイルイメージ（準備中）
-        </p>
-        <p
-          style={{
-            fontSize: 12,
-            color: '#b28b96',
-            lineHeight: 1.6,
-          }}
-        >
-          今後ここに、SNSで人気のネイルチップ写真（同じ角度で撮影されたもの）を
-          表示して、イメージしながら選べるようにしていきます。
-        </p>
-      </div>
+/* 参考画像エリア（チップの形・長さのときだけ表示） */
+{step.id === 'shape' && (
+  <div
+    style={{
+      marginTop: 24,
+      padding: 16,
+      borderRadius: 16,
+      border: '1px dashed #ffd1e4',
+      background: '#fff',
+    }}
+  >
+    <p
+      style={{
+        fontSize: 12,
+        color: '#b28b96',
+        marginBottom: 4,
+        fontWeight: 600,
+      }}
+    >
+      参考ネイルイメージ（準備中）
+    </p>
+    <p
+      style={{
+        fontSize: 12,
+        color: '#b28b96',
+        lineHeight: 1.6,
+      }}
+    >
+      今後ここに、SNSで人気のネイルチップ写真（同じ角度で撮影されたもの）を表示して、
+      イメージしながら選べるようにしていきます。
+    </p>
+  </div>
+)}
 
       {/* 次へ / 戻る */}
       <div
