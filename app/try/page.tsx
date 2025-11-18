@@ -514,24 +514,110 @@ function OptionGrid({ options, selectedId, onSelect }: OptionGridProps) {
     </div>
   );
 }
+// ==== ここから下をそのまま貼り付け ==== 
+
 type ResultSectionProps = {
-  answers: any; // 既存の Answers 型でもOK
+  answers: Answers;
 };
+
+// 各回答ID → 日本語ラベルへの変換マップ
+const sceneLabelMap: Record<string, string> = {
+  omakase: 'おまかせ',
+  daily: '普段使い',
+  office: 'オフィス',
+  special: '特別な日',
+};
+
+const sceneDetailLabelMap: Record<string, string> = {
+  bridal: 'ブライダル',
+  seijin: '成人式',
+  party: 'パーティー・イベント',
+  live: '推し活・ライブ',
+};
+
+const moodLabelMap: Record<string, string> = {
+  cute: 'かわいい',
+  clean: 'きれいめ',
+  adult: '大人っぽい',
+  feminine: 'フェミニン',
+  cool: 'クール',
+  nuance: 'ニュアンス',
+};
+
+const colorLabelMap: Record<string, string> = {
+  beige: 'ベージュ・ブラウン系',
+  pink: 'ピンク系',
+  white: 'ホワイト・クリア系',
+  gray: 'グレー系',
+  colorful: 'カラフル系',
+  color_omakase: 'おまかせ',
+};
+
+const designTypeLabelMap: Record<string, string> = {
+  onecolor: 'ワンカラー',
+  gradation: 'グラデーション',
+  french: 'フレンチ',
+  glitter: 'ラメ・ホログラム',
+  nuance_design: 'ニュアンスデザイン',
+  flower: 'フラワー',
+  pattern: '柄・アートデザイン',
+  wagara: '和柄',
+  magnet: 'マグネット',
+};
+
+const partsLabelMap: Record<string, string> = {
+  simple: 'パーツ控えめ・なし',
+  rich: 'パーツしっかり',
+  matte: 'マット仕上げ',
+  glossy: 'ツヤツヤ仕上げ',
+  parts_omakase: 'おまかせ',
+};
+
+const shapeLabelMap: Record<string, string> = {
+  short_oval: 'ショートオーバル（短めの楕円）',
+  medium_oval: 'ミディアムオーバル（標準的な長さの楕円）',
+  long_oval: 'ロングオーバル（長めの楕円）',
+  short_square: 'ショートスクエア',
+  natural: '自爪に近い形',
+  shape_omakase: 'おまかせ',
+};
+
+function getLabel(map: Record<string, string>, key?: string) {
+  if (!key) return '';
+  return map[key] ?? '';
+}
+
 function ResultSection({ answers }: ResultSectionProps) {
+  const sceneLabel = getLabel(sceneLabelMap, answers.scene);
+  const sceneDetailLabel = getLabel(sceneDetailLabelMap, answers.sceneDetail);
+  const moodLabel = getLabel(moodLabelMap, answers.mood);
+  const colorLabel = getLabel(colorLabelMap, answers.color);
+  const designLabel = getLabel(designTypeLabelMap, answers.designType);
+  const partsLabel = getLabel(partsLabelMap, answers.parts);
+  const shapeLabel = getLabel(shapeLabelMap, answers.shape);
+
   const handleGoPreview = () => {
     if (typeof window !== 'undefined') {
-      // 回答内容を着画ページ・注文ページ用に保存
+      // 回答内容を着画イメージ・注文ページ用に保存
       window.localStorage.setItem(
         'nailmuse_order_answers',
         JSON.stringify(answers)
       );
-      // 着画イメージページへ
+      // 着画イメージページへ遷移
       window.location.href = '/preview';
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, marginTop: 8 }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 24,
+        marginTop: 32,
+        marginBottom: 80,
+      }}
+    >
       {/* AIデザイン案セクション */}
       <section
         style={{
@@ -539,7 +625,7 @@ function ResultSection({ answers }: ResultSectionProps) {
           padding: '28px 20px',
           background: '#fff7fa',
           border: '1px solid #ffe1ea',
-          boxShadow: '0 18px 40px rgba(255, 143, 179, 0.16)',
+          boxShadow: '0 18px 40px rgba(255, 167, 194, 0.25)',
         }}
       >
         <h2
@@ -551,6 +637,7 @@ function ResultSection({ answers }: ResultSectionProps) {
         >
           あなたへのAIデザイン案
         </h2>
+
         <p
           style={{
             fontSize: 13,
@@ -564,63 +651,69 @@ function ResultSection({ answers }: ResultSectionProps) {
           デザインイメージをまとめました。
         </p>
 
-  <ul className="list-disc ml-5 text-gray-700 space-y-2">
-    <li>
-      シーンに合わせた雰囲気で、{answers.mood}テイストの
-      ネイルチップをご提案します。
-    </li>
-    <li>
-      ベースカラーは{answers.baseColor}を中心に、
-      手元がきれいに見える配色にします。
-    </li>
-    <li>
-      デザインタイプは「{answers.designType}」をベースに、
-      あなたの雰囲気に合うように調整します。
-    </li>
-    <li>
-      パーツや質感は「{answers.texture}」を使用し、
-      全体の統一感を演出します。
-    </li>
-    <li>
-      チップの形は「{answers.shape}」を採用し、
-      指先がより美しく見えるように仕上げます。
-    </li>
-  </ul>
-</div>
+        <ul className="list-disc ml-5 text-sm space-y-2">
+          <li>
+            シーンに合った雰囲気で、
+            {moodLabel ? `${moodLabel}テイストの` : 'お好みのテイストの'}
+            ネイルチップをご提案します。
+          </li>
+          <li>
+            ベースカラーは
+            {colorLabel || 'お肌になじむトーン'}
+            を中心に、手元がきれいに見える配色にします。
+          </li>
+          <li>
+            デザインタイプは「
+            {designLabel || 'おまかせ'}
+            」をベースに、あなたの雰囲気に合うように調整します。
+          </li>
+          <li>
+            パーツや質感は「
+            {partsLabel || '仕上がりイメージに合わせた質感'}
+            」を選び、全体の統一感を演出します。
+          </li>
+          <li>
+            チップの形は「
+            {shapeLabel || 'ライフスタイルに合わせた形'}
+            」を採用し、指先がより美しく見えるように仕上げます。
+          </li>
+        </ul>
+      </section>
 
-        {/* 選んだ条件のミニまとめ */}
-        <div
+      {/* 選んだ条件のミニまとめ＋次のステップ */}
+      <section
+        style={{
+          background: '#fff',
+          borderRadius: 24,
+          padding: '16px 14px',
+          border: '1px dashed #f3ccd9',
+        }}
+      >
+        <p
           style={{
-            background: '#fff',
-            borderRadius: 24,
-            padding: '16px 14px',
-            border: '1px dashed #f3c9d8',
+            fontSize: 13,
+            fontWeight: 600,
+            marginBottom: 8,
+            color: '#b6657a',
           }}
         >
-          <p
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              marginBottom: 8,
-              color: '#b6657a',
-            }}
-          >
-        <div className="bg-pink-50 p-4 mt-4 rounded-xl border border-pink-200">
-  <h3 className="font-semibold text-pink-700 mb-2">
-    選んだ条件のまとめ（ダイジェスト）
-  </h3>
+          選んだ条件のまとめ（ダイジェスト）
+        </p>
 
-  <ul className="text-gray-700 space-y-1">
-    <li>・シーン：{answers.scene}</li>
-    <li>・雰囲気：{answers.mood}</li>
-    <li>・ベースカラー：{answers.baseColor}</li>
-    <li>・デザインタイプ：{answers.designType}</li>
-    <li>・パーツ・質感：{answers.texture}</li>
-    <li>・チップの形・長さ：{answers.shape}</li>
-  </ul>
-</div>
+        <ul className="text-gray-700 space-y-1 text-sm">
+          <li>
+            ・シーン：
+            {sceneLabel || 'おまかせ'}
+            {sceneDetailLabel && `（${sceneDetailLabel}）`}
+          </li>
+          <li>・雰囲気：{moodLabel || 'おまかせ'}</li>
+          <li>・ベースカラー：{colorLabel || 'おまかせ'}</li>
+          <li>・デザインタイプ：{designLabel || 'おまかせ'}</li>
+          <li>・パーツ・質感：{partsLabel || 'おまかせ'}</li>
+          <li>・チップの形・長さ：{shapeLabel || 'おまかせ'}</li>
+        </ul>
 
-        {/* 次のステップへ：購入ではなく「着画を見る」ボタンにする */}
+        {/* 次のステップへ：購入ではなく「着画イメージ」へ進む */}
         <div
           style={{
             marginTop: 24,
@@ -634,16 +727,18 @@ function ResultSection({ answers }: ResultSectionProps) {
               padding: '12px 26px',
               borderRadius: 999,
               border: 'none',
-              background: 'linear-gradient(90deg, #ff93b0, #ff7aa7)',
+              background:
+                'linear-gradient(90deg, #ff8ec8, #ff5fb0)',
               color: '#fff',
               fontSize: 14,
               fontWeight: 700,
-              boxShadow: '0 10px 24px rgba(255, 137, 176, 0.45)',
+              boxShadow: '0 10px 24px rgba(255, 143, 191, 0.45)',
               cursor: 'pointer',
             }}
           >
             手の写真を使って着画イメージを見る
           </button>
+
           <p
             style={{
               fontSize: 11,
@@ -658,3 +753,5 @@ function ResultSection({ answers }: ResultSectionProps) {
     </div>
   );
 }
+
+// ==== ここまでを貼り付け ==== 
