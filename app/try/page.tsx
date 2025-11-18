@@ -564,33 +564,29 @@ function ResultSection({ answers }: ResultSectionProps) {
           デザインイメージをまとめました。
         </p>
 
-        <ul
-          style={{
-            fontSize: 14,
-            color: '#444',
-            lineHeight: 1.8,
-            paddingLeft: 20,
-            marginBottom: 24,
-          }}
-        >
-          <li>
-            シーンに合った雰囲気で、
-            {answers.mood ? `${answers.mood}テイスト` : 'バランスの良いテイスト'}
-            のネイルチップをご提案します。
-          </li>
-          <li>
-            ベースカラーは
-            {answers.color ? answers.color : '肌なじみの良いトーン'}
-            を中心に、手元がきれいに見える配色にします。
-          </li>
-          <li>
-            デザインは
-            {answers.designType ? answers.designType : 'シンプル〜ニュアンス'}
-            をベースに、
-            {answers.parts ? answers.parts : '程よいパーツ感'}
-            で仕上げます。
-          </li>
-        </ul>
+  <ul className="list-disc ml-5 text-gray-700 space-y-2">
+    <li>
+      シーンに合わせた雰囲気で、{answers.mood}テイストの
+      ネイルチップをご提案します。
+    </li>
+    <li>
+      ベースカラーは{answers.baseColor}を中心に、
+      手元がきれいに見える配色にします。
+    </li>
+    <li>
+      デザインタイプは「{answers.designType}」をベースに、
+      あなたの雰囲気に合うように調整します。
+    </li>
+    <li>
+      パーツや質感は「{answers.texture}」を使用し、
+      全体の統一感を演出します。
+    </li>
+    <li>
+      チップの形は「{answers.shape}」を採用し、
+      指先がより美しく見えるように仕上げます。
+    </li>
+  </ul>
+</div>
 
         {/* 選んだ条件のミニまとめ */}
         <div
@@ -609,35 +605,20 @@ function ResultSection({ answers }: ResultSectionProps) {
               color: '#b6657a',
             }}
           >
-            選んだ条件のまとめ（ダイジェスト）
-          </p>
-          <div style={{ fontSize: 13, color: '#555', lineHeight: 1.8 }}>
-            <p>
-              <strong>・シーン：</strong>
-              {answers.scene ?? '未入力'}
-            </p>
-            <p>
-              <strong>・雰囲気：</strong>
-              {answers.mood ?? '未入力'}
-            </p>
-            <p>
-              <strong>・ベースカラー：</strong>
-              {answers.color ?? '未入力'}
-            </p>
-            <p>
-              <strong>・デザインタイプ：</strong>
-              {answers.designType ?? '未入力'}
-            </p>
-            <p>
-              <strong>・パーツ・質感：</strong>
-              {answers.parts ?? '未入力'}
-            </p>
-            <p>
-              <strong>・チップの形・長さ：</strong>
-              {answers.shape ?? '未入力'}
-            </p>
-          </div>
-        </div>
+        <div className="bg-pink-50 p-4 mt-4 rounded-xl border border-pink-200">
+  <h3 className="font-semibold text-pink-700 mb-2">
+    選んだ条件のまとめ（ダイジェスト）
+  </h3>
+
+  <ul className="text-gray-700 space-y-1">
+    <li>・シーン：{answers.scene}</li>
+    <li>・雰囲気：{answers.mood}</li>
+    <li>・ベースカラー：{answers.baseColor}</li>
+    <li>・デザインタイプ：{answers.designType}</li>
+    <li>・パーツ・質感：{answers.texture}</li>
+    <li>・チップの形・長さ：{answers.shape}</li>
+  </ul>
+</div>
 
         {/* 次のステップへ：購入ではなく「着画を見る」ボタンにする */}
         <div
