@@ -596,18 +596,6 @@ function ResultSection({ answers }: ResultSectionProps) {
   const partsLabel = getLabel(partsLabelMap, answers.parts);
   const shapeLabel = getLabel(shapeLabelMap, answers.shape);
 
-  const handleGoPreview = () => {
-    if (typeof window !== 'undefined') {
-      // 回答内容を着画イメージ・注文ページ用に保存
-      window.localStorage.setItem(
-        'nailmuse_order_answers',
-        JSON.stringify(answers)
-      );
-      // 着画イメージページへ遷移
-      window.location.href = '/preview';
-    }
-  };
-
     const handleGoPreview = () => {
     if (typeof window !== 'undefined') {
       // 回答内容を着画イメージ・注文ページ用に保存
