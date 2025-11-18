@@ -390,7 +390,6 @@ function QuestionStep(props: QuestionStepProps) {
       {/* ここで選択肢 */}
 {renderOptions()}
 
-/* 参考画像エリア（チップの形・長さのときだけ表示） */
 {step.id === 'shape' && (
   <div
     style={{
