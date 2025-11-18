@@ -608,6 +608,18 @@ function ResultSection({ answers }: ResultSectionProps) {
     }
   };
 
+    const handleGoPreview = () => {
+    if (typeof window !== 'undefined') {
+      // 回答内容を着画イメージ・注文ページ用に保存
+      window.localStorage.setItem(
+        'nailmuse_order_answers',
+        JSON.stringify(answers)
+      );
+      // 着画イメージページへ遷移
+      window.location.href = '/preview';
+    }
+  };
+
   return (
     <div
       style={{
@@ -618,62 +630,70 @@ function ResultSection({ answers }: ResultSectionProps) {
         marginBottom: 80,
       }}
     >
-
+      {/* 選んだ条件のまとめ（ダイジェスト） */}
+      <section
+        style={{
+          background: '#fff',
+          borderRadius: 24,
+          padding: '16px 14px',
+          border: '1px dashed #f3cdd9',
+        }}
+      >
+        <p
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            marginBottom: 8,
+            color: '#b6657a',
+          }}
+        >
           選んだ条件のまとめ（ダイジェスト）
         </p>
-
-        <ul className="text-gray-700 space-y-1 text-sm">
-          <li>
-            ・シーン：
-            {sceneLabel || 'おまかせ'}
-            {sceneDetailLabel && `（${sceneDetailLabel}）`}
-          </li>
+        <ul className="text-gray-700 space-y-1">
+          <li>・シーン：{sceneLabel || 'おまかせ'}</li>
           <li>・雰囲気：{moodLabel || 'おまかせ'}</li>
           <li>・ベースカラー：{colorLabel || 'おまかせ'}</li>
           <li>・デザインタイプ：{designLabel || 'おまかせ'}</li>
           <li>・パーツ・質感：{partsLabel || 'おまかせ'}</li>
           <li>・チップの形・長さ：{shapeLabel || 'おまかせ'}</li>
         </ul>
+      </section>
 
-        {/* 次のステップへ：購入ではなく「着画イメージ」へ進む */}
-        <div
+      {/* 次のステップ：着画イメージへ */}
+      <section
+        style={{
+          marginTop: 24,
+          textAlign: 'center',
+        }}
+      >
+        <button
+          type="button"
+          onClick={handleGoPreview}
           style={{
-            marginTop: 24,
-            textAlign: 'center',
+            padding: '12px 26px',
+            borderRadius: 999,
+            border: 'none',
+            background:
+              'linear-gradient(90deg, #ff8daf 0%, #ff5f9a 50%, #ff7fb8 100%)',
+            color: '#fff',
+            fontSize: 14,
+            fontWeight: 700,
+            boxShadow: '0 10px 24px rgba(255, 143, 184, 0.35)',
+            cursor: 'pointer',
           }}
         >
-          <button
-            type="button"
-            onClick={handleGoPreview}
-            style={{
-              padding: '12px 26px',
-              borderRadius: 999,
-              border: 'none',
-              background:
-                'linear-gradient(90deg, #ff8ec8, #ff5fb0)',
-              color: '#fff',
-              fontSize: 14,
-              fontWeight: 700,
-              boxShadow: '0 10px 24px rgba(255, 143, 191, 0.45)',
-              cursor: 'pointer',
-            }}
-          >
-            手の写真を使って着画イメージを見る
-          </button>
-
-          <p
-            style={{
-              fontSize: 11,
-              color: '#888',
-              marginTop: 6,
-            }}
-          >
-            ※この時点ではまだ注文は確定しません。次の画面で着画イメージを確認できます。
-          </p>
-        </div>
+          手の写真を使って着画イメージを見る
+        </button>
+        <p
+          style={{
+            fontSize: 11,
+            color: '#888',
+            marginTop: 6,
+          }}
+        >
+          ※この時点ではまだ注文は確定しません。次の画面で着画イメージを確認できます。
+        </p>
       </section>
     </div>
   );
 }
-
-// ==== ここまでを貼り付け ==== 
