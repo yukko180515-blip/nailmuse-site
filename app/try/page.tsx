@@ -517,22 +517,22 @@ function OptionGrid({ options, selectedId, onSelect }: OptionGridProps) {
 type ResultSectionProps = {
   answers: any; // 既存の Answers 型でもOK
 };
-
 function ResultSection({ answers }: ResultSectionProps) {
-  const handleGoOrder = () => {
+  const handleGoPreview = () => {
     if (typeof window !== 'undefined') {
-      // 回答内容をローカルストレージに保存してから /order へ
+      // 回答内容を着画ページ・注文ページ用に保存
       window.localStorage.setItem(
         'nailmuse_order_answers',
         JSON.stringify(answers)
       );
-      window.location.href = '/order';
+      // 着画イメージページへ
+      window.location.href = '/preview';
     }
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32, marginTop: 8 }}>
-      {/* あなたへのAIデザイン案 */}
+      {/* AIデザイン案セクション */}
       <section
         style={{
           borderRadius: 32,
@@ -559,14 +559,18 @@ function ResultSection({ answers }: ResultSectionProps) {
             lineHeight: 1.8,
           }}
         >
-          入力してもらった内容をもとに、こんなイメージのネイルチップを想定しています。
+          回答していただいた内容をもとに、
+          あなたの雰囲気やシーンに合わせたネイルチップの
+          デザインイメージをまとめました。
         </p>
+
         <ul
           style={{
             fontSize: 14,
             color: '#444',
             lineHeight: 1.8,
             paddingLeft: 20,
+            marginBottom: 24,
           }}
         >
           <li>
@@ -582,20 +586,69 @@ function ResultSection({ answers }: ResultSectionProps) {
           <li>
             デザインは
             {answers.designType ? answers.designType : 'シンプル〜ニュアンス'}
-            をベースに、{answers.parts ? answers.parts : '程よいパーツ感'}で仕上げます。
+            をベースに、
+            {answers.parts ? answers.parts : '程よいパーツ感'}
+            で仕上げます。
           </li>
         </ul>
 
-        {/* ここが新しく追加する「オーダーへ進む」ボタン */}
+        {/* 選んだ条件のミニまとめ */}
         <div
           style={{
-            marginTop: 20,
+            background: '#fff',
+            borderRadius: 24,
+            padding: '16px 14px',
+            border: '1px dashed #f3c9d8',
+          }}
+        >
+          <p
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              marginBottom: 8,
+              color: '#b6657a',
+            }}
+          >
+            選んだ条件のまとめ（ダイジェスト）
+          </p>
+          <div style={{ fontSize: 13, color: '#555', lineHeight: 1.8 }}>
+            <p>
+              <strong>・シーン：</strong>
+              {answers.scene ?? '未入力'}
+            </p>
+            <p>
+              <strong>・雰囲気：</strong>
+              {answers.mood ?? '未入力'}
+            </p>
+            <p>
+              <strong>・ベースカラー：</strong>
+              {answers.color ?? '未入力'}
+            </p>
+            <p>
+              <strong>・デザインタイプ：</strong>
+              {answers.designType ?? '未入力'}
+            </p>
+            <p>
+              <strong>・パーツ・質感：</strong>
+              {answers.parts ?? '未入力'}
+            </p>
+            <p>
+              <strong>・チップの形・長さ：</strong>
+              {answers.shape ?? '未入力'}
+            </p>
+          </div>
+        </div>
+
+        {/* 次のステップへ：購入ではなく「着画を見る」ボタンにする */}
+        <div
+          style={{
+            marginTop: 24,
             textAlign: 'center',
           }}
         >
           <button
             type="button"
-            onClick={handleGoOrder}
+            onClick={handleGoPreview}
             style={{
               padding: '12px 26px',
               borderRadius: 999,
@@ -608,7 +661,7 @@ function ResultSection({ answers }: ResultSectionProps) {
               cursor: 'pointer',
             }}
           >
-            この条件でオーダーに進む
+            手の写真を使って着画イメージを見る
           </button>
           <p
             style={{
@@ -617,14 +670,10 @@ function ResultSection({ answers }: ResultSectionProps) {
               marginTop: 6,
             }}
           >
-            （次の画面で金額の目安とお支払い方法を確認できます）
+            ※この時点ではまだ注文は確定しません。次の画面で着画イメージを確認できます。
           </p>
         </div>
       </section>
-
-      {/* 手の写真アップロード（ベータ）のセクションや、条件まとめのセクション */}
-      {/* ↓ ここから下は、今のファイルにある既存の「手の写真」セクション＋「選んだ条件まとめ」セクションをそのまま残してOK */}
-      {/* つまり、「AIデザイン案」の部分だけ上書きしたイメージです */}
     </div>
   );
 }
