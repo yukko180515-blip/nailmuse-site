@@ -515,39 +515,31 @@ function OptionGrid({ options, selectedId, onSelect }: OptionGridProps) {
   );
 }
 type ResultSectionProps = {
-  answers: any;
+  answers: any; // 既存の Answers 型でもOK
 };
 
 function ResultSection({ answers }: ResultSectionProps) {
   const handleGoOrder = () => {
-    if (typeof window !== "undefined") {
-      // 回答データを保存
+    if (typeof window !== 'undefined') {
+      // 回答内容をローカルストレージに保存してから /order へ
       window.localStorage.setItem(
-        "nailmuse_order_answers",
+        'nailmuse_order_answers',
         JSON.stringify(answers)
       );
-      // 次のページへ
-      window.location.href = "/order";
+      window.location.href = '/order';
     }
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 32,
-        marginTop: 8,
-      }}
-    >
-      {/* AIデザイン案 */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 32, marginTop: 8 }}>
+      {/* あなたへのAIデザイン案 */}
       <section
         style={{
           borderRadius: 32,
-          padding: "28px 20px",
-          background: "#fff7fa",
-          border: "1px solid #ffe1ea",
-          boxShadow: "0 18px 40px rgba(255, 143, 179, 0.16)",
+          padding: '28px 20px',
+          background: '#fff7fa',
+          border: '1px solid #ffe1ea',
+          boxShadow: '0 18px 40px rgba(255, 143, 179, 0.16)',
         }}
       >
         <h2
@@ -559,85 +551,80 @@ function ResultSection({ answers }: ResultSectionProps) {
         >
           あなたへのAIデザイン案
         </h2>
-
         <p
           style={{
             fontSize: 13,
-            color: "#777",
+            color: '#777',
             marginBottom: 16,
             lineHeight: 1.8,
           }}
         >
           入力してもらった内容をもとに、こんなイメージのネイルチップを想定しています。
         </p>
-
         <ul
           style={{
             fontSize: 14,
-            color: "#444",
+            color: '#444',
             lineHeight: 1.8,
             paddingLeft: 20,
-            marginBottom: 24,
           }}
         >
           <li>
             シーンに合った雰囲気で、
-            {answers.mood
-              ? `${answers.mood}テイスト`
-              : "バランスの良いテイスト"}
+            {answers.mood ? `${answers.mood}テイスト` : 'バランスの良いテイスト'}
             のネイルチップをご提案します。
           </li>
           <li>
             ベースカラーは
-            {answers.color ? answers.color : "肌なじみの良いトーン"}
+            {answers.color ? answers.color : '肌なじみの良いトーン'}
             を中心に、手元がきれいに見える配色にします。
           </li>
           <li>
             デザインは
-            {answers.designType
-              ? answers.designType
-              : "シンプル〜ニュアンス"}
-            をベースに、
-            {answers.parts ? answers.parts : "程よいパーツ感"}
-            で仕上げます。
+            {answers.designType ? answers.designType : 'シンプル〜ニュアンス'}
+            をベースに、{answers.parts ? answers.parts : '程よいパーツ感'}で仕上げます。
           </li>
         </ul>
 
-        {/* ★ 追加するボタン（ここが本体） */}
-        <div style={{ textAlign: "center" }}>
+        {/* ここが新しく追加する「オーダーへ進む」ボタン */}
+        <div
+          style={{
+            marginTop: 20,
+            textAlign: 'center',
+          }}
+        >
           <button
             type="button"
             onClick={handleGoOrder}
             style={{
-              padding: "12px 26px",
+              padding: '12px 26px',
               borderRadius: 999,
-              border: "none",
-              background: "linear-gradient(90deg, #ff93b0, #ff7aa7)",
-              color: "#fff",
+              border: 'none',
+              background: 'linear-gradient(90deg, #ff93b0, #ff7aa7)',
+              color: '#fff',
               fontSize: 14,
               fontWeight: 700,
-              boxShadow: "0 10px 24px rgba(255, 137, 176, 0.45)",
-              cursor: "pointer",
+              boxShadow: '0 10px 24px rgba(255, 137, 176, 0.45)',
+              cursor: 'pointer',
             }}
           >
             この条件でオーダーに進む
           </button>
-
           <p
             style={{
               fontSize: 11,
-              color: "#888",
+              color: '#888',
               marginTop: 6,
             }}
           >
-            （次の画面で料金の目安と支払い方法を確認できます）
+            （次の画面で金額の目安とお支払い方法を確認できます）
           </p>
         </div>
       </section>
 
-      {/* ★ ここから下は既存の “手の写真アップロード” や “選んだ条件まとめ” コンポーネントをそのまま残してOK */}
+      {/* 手の写真アップロード（ベータ）のセクションや、条件まとめのセクション */}
+      {/* ↓ ここから下は、今のファイルにある既存の「手の写真」セクション＋「選んだ条件まとめ」セクションをそのまま残してOK */}
+      {/* つまり、「AIデザイン案」の部分だけ上書きしたイメージです */}
     </div>
   );
 }
-
-export default ResultSection;
