@@ -268,7 +268,27 @@ export default function OrderPage() {
         >
           この内容で相談したい（β版）
         </button>
-
+<button
+  type="button"
+  onClick={() => {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/price';
+    }
+  }}
+  style={{
+    marginTop: 16,
+    padding: '10px 24px',
+    borderRadius: 999,
+    border: '1px solid #e3c7d9',
+    background: '#fff',
+    color: '#8c707b',
+    fontSize: 13,
+    fontWeight: 500,
+    cursor: 'pointer',
+  }}
+>
+  価格の相談に進む
+</button>
         <p
           style={{
             fontSize: 11,
